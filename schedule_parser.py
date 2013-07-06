@@ -2,14 +2,18 @@ from html.parser import HTMLParser
 import re
 
 class MyHTMLParser(HTMLParser):
+    
     def __init__(self):
         super().__init__()
         self.active = False
         self.match_pat = re.compile("matchup[0-9]*")
-        self.match_index = 0
+        self.team_pat = re.compile("teamId\=([0-9]*)")
+        self.week_index = 0
+        self.weeks = []
+        self.pair = None
         
 
-    def get_match_index(self, attribute):
+    def get_week_index(self, attribute):
         result = re.search(r'\d+',attribute[1])
         return int(result.group())
     
@@ -17,12 +21,16 @@ class MyHTMLParser(HTMLParser):
         for attribute in attrs:
             if self.is_matchup(attribute):
                 self.active = True
-                self.match_index = self.get_match_index(attribute)
-        if self.active:
-            print(self.match_index)
-            for att,value in attrs:
-                if att == "href" and "teamid" in value.lower():
-                    print(att + ":" + value)
+                self.week_index = self.get_week_index(attribute)
+            elif self.active and self.is_team(attribute):
+                team_id = re.search(self.team_pat, attribute[1]).group(1)
+                if self.pair:
+                    self.add_to_week(Matchup(self.pair,team_id))
+                    self.pair = None
+                else:
+                    self.pair = team_id
+                
+                    
     def handle_endtag(self, tag):
         pass
 
@@ -35,10 +43,43 @@ class MyHTMLParser(HTMLParser):
         if name == "name" and self.match_pat.match(value):
             return True
         return False
+    
+    def is_team(self, attribute):
+        if attribute[0] == "href" and "teamid" in attribute[1].lower():
+            return True
+        return False
+    
+    def add_to_week(self, matchup):
+        while len(self.weeks) != self.week_index:
+            self.weeks.append([])
+        week = self.weeks[self.week_index-1]
+        week.append(matchup)
         
-
+class Matchup():
+    
+    def __init__(self, away, home):
+        self.away = away
+        self.home = home
+        
+    def __str__(self):
+        return "(Home: %s, Away: %s)" % (self.away,self.home)
+        
+class Week():
+    
+    def __init__(self):
+        self.matchups = []
+        
+    def add_matchup(self, matchup):
+        self.matchups.append(matchup)
+        
+    def __str__(self):
+        return str(self.matchups)
+        
+        
 parser = MyHTMLParser()
 
 with open("espn-schedule.html","r") as schedule:
     parser.feed(schedule.read())
+    
+print(parser.weeks)
 

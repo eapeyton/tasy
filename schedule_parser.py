@@ -54,6 +54,9 @@ class MyHTMLParser(HTMLParser):
             self.weeks.append([])
         week = self.weeks[self.week_index-1]
         week.append(matchup)
+
+    def __str__(self):
+        return "\n".join([str(week) for week in self.weeks])
         
 class Matchup():
     
@@ -61,8 +64,10 @@ class Matchup():
         self.away = away
         self.home = home
         
+    def __repr__(self):
+        return self.__str__() 
     def __str__(self):
-        return "(Home: %s, Away: %s)" % (self.away,self.home)
+        return "(Away: %s, Home: %s)" % (self.away,self.home)
         
 class Week():
     
@@ -78,8 +83,7 @@ class Week():
         
 parser = MyHTMLParser()
 
-with open("espn-schedule.html","r") as schedule:
+with open("espn-schedule-2.html","r") as schedule:
     parser.feed(schedule.read())
     
-print(parser.weeks)
-
+print(parser)

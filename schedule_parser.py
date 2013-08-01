@@ -1,8 +1,8 @@
 from html.parser import HTMLParser
+import argparse
 import re
 
 class MyHTMLParser(HTMLParser):
-    
     def __init__(self):
         super().__init__()
         self.active = False
@@ -59,7 +59,6 @@ class MyHTMLParser(HTMLParser):
         return "\n".join([str(week) for week in self.weeks])
         
 class Matchup():
-    
     def __init__(self, away, home):
         self.away = away
         self.home = home
@@ -70,7 +69,6 @@ class Matchup():
         return "(Away: %s, Home: %s)" % (self.away,self.home)
         
 class Week():
-    
     def __init__(self):
         self.matchups = []
         
@@ -80,10 +78,17 @@ class Week():
     def __str__(self):
         return str(self.matchups)
         
+class Team():
+    def __init__(self,id):
+        self.id = id
         
-parser = MyHTMLParser()
 
-with open("espn-schedule-2.html","r") as schedule:
-    parser.feed(schedule.read())
-    
-print(parser)
+if __name__ == "__main__":
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("html")
+    args = arg_parser.parse_args() 
+    parser = MyHTMLParser()
+    with open(args.html,"r") as schedule:
+        parser.feed(schedule.read())
+    print(parser)
+

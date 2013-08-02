@@ -1,13 +1,14 @@
 from html.parser import HTMLParser
 import argparse
 import re
+import logging
 
 class MyHTMLParser(HTMLParser):
     def __init__(self):
         super().__init__()
         self.active = False
-        self.match_pat = re.compile("matchup[0-9]*")
-        self.team_pat = re.compile("teamId\=([0-9]*)")
+        self.match_pat = re.compile("matchup\d*")
+        self.team_pat = re.compile("/ffl/clubhouse\?leagueId=\d*&amp;teamId=(\d*)&amp;seasonId=\d*")
         self.week_index = 0
         self.weeks = []
         self.pair = None
@@ -22,13 +23,17 @@ class MyHTMLParser(HTMLParser):
             if self.is_matchup(attribute):
                 self.active = True
                 self.week_index = self.get_week_index(attribute)
-            elif self.active and self.is_team(attribute):
-                team_id = re.search(self.team_pat, attribute[1]).group(1)
-                if self.pair:
-                    self.add_to_week(Matchup(self.pair,team_id))
-                    self.pair = None
-                else:
-                    self.pair = team_id
+                logging.debug("ON WEEK %d" % self.week_index)
+            elif self.active and attribute[1] != None: 
+                logging.debug("FOUND ATTRIBUTE %s" % attribute[1])
+                team_id = self.team_pat.match(attribute[1])
+                if team_id != None:
+                    team_id = team_id.group(1)
+                    if self.pair:
+                        self.add_to_week(Matchup(self.pair,team_id))
+                        self.pair = None
+                    else:
+                        self.pair = team_id
                 
                     
     def handle_endtag(self, tag):
@@ -84,6 +89,7 @@ class Team():
         
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("html")
     args = arg_parser.parse_args() 

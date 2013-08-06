@@ -1,4 +1,5 @@
 from html.parser import HTMLParser
+import xml.etree.ElementTree as ET
 import argparse
 import re
 import logging
@@ -33,7 +34,7 @@ class MyHTMLParser(HTMLParser):
                     logging.debug("MATCHED!")
                     team_id = team_id.group(1)
                     if self.pair:
-                        self.add_to_week(Matchup(self.pair,team_id))
+                        self.add_to_week(Matchup(int(self.pair),int(team_id)))
                         self.pair = None
                     else:
                         self.pair = team_id
@@ -62,6 +63,24 @@ class MyHTMLParser(HTMLParser):
             self.weeks.append([])
         week = self.weeks[self.week_index-1]
         week.append(matchup)
+
+    def test(self, key):
+        tree = ET.parse(key)
+        schedule = tree.getroot()
+        for iweek in range(len(schedule)):
+            week = schedule[iweek]
+            for imatchup in range(len(week)):
+                matchup = week[imatchup]
+                away = int(matchup[0].text)
+                home = int(matchup[1].text)
+                awayt = self.weeks[iweek][imatchup].away
+                homet = self.weeks[iweek][imatchup].home
+                if away == awayt and home == homet:
+                    logging.info("OK")     
+                else:
+                    logging.warn("WEEK %d MATCHUP %d MISMATCH!!!!" % (iweek,imatchup))
+
+        
 
     def __str__(self):
         return "\n".join([str(week) for week in self.weeks])
@@ -92,12 +111,13 @@ class Team():
         
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.WARN)
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("html")
+    arg_parser.add_argument("-t","--test",dest="test")
     args = arg_parser.parse_args() 
     parser = MyHTMLParser()
     with open(args.html,"r") as schedule:
         parser.feed(schedule.read())
-    print(parser)
+    parser.test(args.test)
 

@@ -1,0 +1,132 @@
+<schedule>
+    <week index='1'>
+        <matchup>
+            <team>1</team>
+            <team>2</team>
+        </matchup>
+        <matchup>
+            <team>3</team>
+            <team>4</team>
+        </matchup>
+    </week>
+    <week index='2'>
+        <matchup>
+            <team>3</team>
+            <team>1</team>
+        </matchup>
+        <matchup>
+            <team>4</team>
+            <team>2</team>
+        </matchup>
+    </week>
+    <week index='3'>
+        <matchup>
+            <team>2</team>
+            <team>3</team>
+        </matchup>
+        <matchup>
+            <team>1</team>
+            <team>4</team>
+        </matchup>
+    </week>
+    <week index='4'>
+        <matchup>
+            <team>2</team>
+            <team>1</team>
+        </matchup>
+        <matchup>
+            <team>4</team>
+            <team>3</team>
+        </matchup>
+    </week>
+    <week index='5'>
+        <matchup>
+            <team>1</team>
+            <team>3</team>
+        </matchup>
+        <matchup>
+            <team>2</team>
+            <team>4</team>
+        </matchup>
+    </week>
+    <week index='6'>
+        <matchup>
+            <team>3</team>
+            <team>2</team>
+        </matchup>
+        <matchup>
+            <team>4</team>
+            <team>1</team>
+        </matchup>
+    </week>
+    <week index='7'>
+        <matchup>
+            <team>1</team>
+            <team>2</team>
+        </matchup>
+        <matchup>
+            <team>3</team>
+            <team>4</team>
+        </matchup>
+    </week>
+    <week index='8'>
+        <matchup>
+            <team>3</team>
+            <team>1</team>
+        </matchup>
+        <matchup>
+            <team>4</team>
+            <team>2</team>
+        </matchup>
+    </week>
+    <week index='9'>
+        <matchup>
+            <team>2</team>
+            <team>3</team>
+        </matchup>
+        <matchup>
+            <team>1</team>
+            <team>4</team>
+        </matchup>
+    </week>
+    <week index='10'>
+        <matchup>
+            <team>2</team>
+            <team>1</team>
+        </matchup>
+        <matchup>
+            <team>4</team>
+            <team>3</team>
+        </matchup>
+    </week>
+    <week index='11'>
+        <matchup>
+            <team>1</team>
+            <team>3</team>
+        </matchup>
+        <matchup>
+            <team>2</team>
+            <team>4</team>
+        </matchup>
+    </week>
+    <week index='12'>
+        <matchup>
+            <team>3</team>
+            <team>2</team>
+        </matchup>
+        <matchup>
+            <team>4</team>
+            <team>1</team>
+        </matchup>
+    </week>
+    <week index='13'>
+        <matchup>
+            <team>1</team>
+            <team>2</team>
+        </matchup>
+        <matchup>
+            <team>3</team>
+            <team>4</team>
+        </matchup>
+    </week>
+</schedule>

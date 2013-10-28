@@ -1,8 +1,8 @@
 import json
 
 class Team:
-    def __init__(self, id):
-        self.id = int(id)
+    def __init__(self, id, owner=None):
+        self.id = id
 
     def to_JSON(self):
         return json.dumps(self.__dict__, cls=TasyEncoder, indent=4)
@@ -10,7 +10,7 @@ class Team:
 class League:
 
     def __init__(self, id):
-        self.id = int(id)
+        self.id = id
         self.seasons = {}
 
     def add_season(self, year):
@@ -18,7 +18,7 @@ class League:
 
 class Season:
     def __init__(self, year):
-        self.year = int(year)
+        self.year = year
         self.teams = {}
 
     def add_team(self, team_id):
@@ -26,7 +26,7 @@ class Season:
 
 class Player:
     def __init__(self, id, name=None):
-        self.id = int(id)
+        self.id = id
         self.name = name
 
     def __eq__(self,other):

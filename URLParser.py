@@ -35,7 +35,7 @@ class URLParser:
         player_tags = page.find_all('a',playerid=re.compile("\d+"),text=True)
         players = set()
         for player in player_tags:
-            players.add(Player(player['playerid'],player.string))
+            players.add(Player(int(player['playerid']),player.string))
         return players
         
 

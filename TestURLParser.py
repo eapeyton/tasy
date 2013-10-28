@@ -1,7 +1,7 @@
 import unittest
 import Util
 from URLParser import URLParser
-from URLParser import Player
+from FantasyObjects import *
 
 
 class TestURLParser(unittest.TestCase):
@@ -27,9 +27,7 @@ class TestURLParser(unittest.TestCase):
     def testParsePlayers(self):
         self.parser.parse("http://games.espn.go.com/ffl/clubhouse?leagueId=1015919&teamId=1&seasonId=2012")
         team = self.parser.team
-        self.assertEqual(self.parser.league.id, 1015919)
         self.assertEqual(team.id, 1)
-        self.assertIn(2012, self.parser.league.seasons)
         self.assertHasPlayer(team, 11237, "Matt Ryan")
         self.assertHasPlayer(team, 11289, "Ray Rice")
         self.assertHasPlayer(team, 14885, "Doug Martin")
@@ -45,6 +43,29 @@ class TestURLParser(unittest.TestCase):
         self.assertHasPlayer(team, 11439, "Pierre Garcon")
         self.assertHasPlayer(team, 9613, "DeAngelo Willioms")
 
+    def assertHasPlayer(self,team,id,name):
+        player = Player(id,name)
+        self.assertIn(player, team.players)
+
+    def testParseSeason(self):
+        self.parser.parse("http://games.espn.go.com/ffl/leagueoffice?leagueId=408631&seasonId=2013")
+        season = self.parser.season
+        self.assertEqual(season.year, 2013)
+        self.assertHasTeam(season, 1, "Nick Burke")
+        self.assertHasTeam(season, 2, "Jeff Siegel")
+        self.assertHasTeam(season, 3, "Nick Macie")
+        self.assertHasTeam(season, 4, "Danny Duncanson")
+        self.assertHasTeam(season, 5, "Chris Nachmias")
+        self.assertHasTeam(season, 6, "Chris Thorne")
+        self.assertHasTeam(season, 7, "Ryan Davis")
+        self.assertHasTeam(season, 8, "Vishnu Iyengar")
+        self.assertHasTeam(season, 9, "vishaak ravi")
+        self.assertHasTeam(season, 10, "Eric Peyton")
+
+    def assertHasTeam(self,season,id,owner):
+        team = Team(id, owner=owner)
+        self.assertIn(team, season.teams)
+
     @unittest.skip("Impossible right now because dicts are serialized in no particular order...")
     def testParseToJSON(self):
         self.maxDiff = None
@@ -53,9 +74,6 @@ class TestURLParser(unittest.TestCase):
         self.assertEqual(team.to_JSON(), key.read())
         key.close()
 
-    def assertHasPlayer(self,team,id,name):
-        player = Player(id,name)
-        self.assertIn(player, team.players)
         
 if __name__ == '__main__':
     unittest.main()

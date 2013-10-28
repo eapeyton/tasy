@@ -1,7 +1,7 @@
 import unittest
 import Util
-from TeamPageParser import URLParser
-from TeamPageParser import Player
+from URLParser import URLParser
+from URLParser import Player
 
 
 class TestURLParser(unittest.TestCase):

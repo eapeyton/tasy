@@ -21,7 +21,7 @@ class Downloader:
             html = urlopen(url).read().decode('utf-8')
             self.cache[url] = html
             return html
-
+            
     def __exit__(self, type, value, traceback):
         self.cache.close()
 

@@ -14,7 +14,7 @@ class TestURLParser(unittest.TestCase):
         with Downloader() as dler:
             dler.uncache(my_url)
             webpage = dler.download(my_url)
-            self.assertEqual(webpage[:95], """<!--\nTo change this template, choose Tools | Templates\nand open the template in the editor.\n-->""")
+            self.assertEqual(webpage[:15], """<!DOCTYPE html>""")
 
     def testDownloadCache(self):
         my_url = "http://eapeyton.com"
@@ -32,14 +32,10 @@ class TestURLParser(unittest.TestCase):
         self.assertEqual(url, "http://games.espn.go.com/ffl/leagueoffice?leagueId=5555555")
 
     def testComposeTeamURL(self):
-        # Forced to test both cases because of unsorted-ness of dictionary
-        # TODO: better solution
         url = self.parser.composeURL(teamId=4,leagueId=1015919)
-        self.assertTrue(url == "http://games.espn.go.com/ffl/clubhouse?leagueId=1015919&teamId=4" 
-                     or url == "http://games.espn.go.com/ffl/clubhouse?teamId=4&leagueId=1015919")
+        self.assertEqual(url,"http://games.espn.go.com/ffl/clubhouse?leagueId=1015919&teamId=4")
         url = self.parser.composeURL(leagueId=5555555, teamId=12)
-        self.assertTrue(url == "http://games.espn.go.com/ffl/clubhouse?leagueId=5555555&teamId=12" 
-                     or url == "http://games.espn.go.com/ffl/clubhouse?teamId=12&leagueId=5555555")
+        self.assertEqual(url,"http://games.espn.go.com/ffl/clubhouse?leagueId=5555555&teamId=12")
 
     def testRegexTeam(self):
         self.parser.parse("http://games.espn.go.com/ffl/clubhouse?leagueId=1015919&teamId=1&seasonId=2013")
@@ -48,9 +44,14 @@ class TestURLParser(unittest.TestCase):
         self.assertIn(2013, self.parser.league.seasons)
 
     def testRegexSeason(self):
-        season = self.parser.parse("http://games.espn.go.com/ffl/leagueoffice?leagueId=1015919&seasonId=2012")
+        self.parser.parse("http://games.espn.go.com/ffl/leagueoffice?leagueId=1015919&seasonId=2012")
         self.assertEqual(self.parser.league.id, 1015919)
         self.assertEqual(self.parser.season.year, 2012)
+
+    def testParseNoYear(self):
+        self.parser.parse("http://games.espn.go.com/ffl/leagueoffice?leagueId=1020911")
+        self.assertEqual(self.parser.league.id, 1020911)
+        self.assertEqual(self.parser.season.year, 2013)
 
     def testParsePlayers(self):
         self.parser.parse("http://games.espn.go.com/ffl/clubhouse?leagueId=1015919&teamId=1&seasonId=2012")

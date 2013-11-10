@@ -3,13 +3,17 @@ from bs4 import BeautifulSoup
 from FantasyObjects import *
 from urllib.parse import *
 from Util import Downloader
+from datetime import date
+from collections import OrderedDict
 
 class URLParser:
+
+    def __init__(self):
+        pass
 
     def match_url(self, url):
         url = urlparse(url)
         query = parse_qs(url.query)
-        #url_regex = re.search("games\.espn\.go\.com/ffl/(?:clubhouse|leagueoffice)?\?leagueId=(\d+)(?:&teamId=(\d+))?(?:&seasonId=(\d+))?",url)
         league_id = None
         team_id = None
         season_year = None
@@ -29,7 +33,8 @@ class URLParser:
         else:
             path = '/ffl/leagueoffice'
         params = ''
-        query = urlencode(args)
+        ordered_args = OrderedDict(sorted(args.items(), key=lambda t: t[0]))
+        query = urlencode(ordered_args)
         fragment = ''
         url = urlunparse((scheme,location,path,params,query,fragment))
         return url
@@ -39,24 +44,25 @@ class URLParser:
         if league_id is not None:
             self.league = League(league_id)
 
-            if season_year is not None:
-                self.league.add_season(season_year)
-                self.season = self.league.seasons[season_year]
+            if season_year is None:
+                season_year = date.today().year
+            self.league.add_season(season_year)
+            self.season = self.league.seasons[season_year]
 
-                if team_id is not None and "clubhouse" in url:
-                    league_URL = self.composeURL(leagueId=league_id,seasonId=season_year)
-                    self.season.add_teams(self.parse_teams(league_URL))
+            if team_id is not None and "clubhouse" in url:
+                league_URL = self.composeURL(leagueId=league_id,seasonId=season_year)
+                self.season.add_teams(self.parse_teams(league_URL))
+                with Downloader() as dler:
+                    html = dler.download(url)
+                self.team = self.season.teams[team_id]
+                self.team.players = self.parse_team_players(html)
+            if "leagueoffice" in url:
+                self.season.add_teams(self.parse_teams(url))
+                for team in self.season.teams.values():
+                    team_URL = self.composeURL(leagueId=league_id,seasonId=season_year,teamId=team.id)
                     with Downloader() as dler:
-                        html = dler.download(url)
-                    self.team = self.season.teams[team_id]
-                    self.team.players = self.parse_team_players(html)
-                if "leagueoffice" in url:
-                    self.season.add_teams(self.parse_teams(url))
-                    for team in self.season.teams.values():
-                        team_URL = self.composeURL(leagueId=league_id,seasonId=season_year,teamId=team.id)
-                        with Downloader() as dler:
-                            html = dler.download(team_URL)
-                        team.players = self.parse_team_players(html)
+                        html = dler.download(team_URL)
+                    team.players = self.parse_team_players(html)
 
     def parse_teams(self, league_url):
         with Downloader() as dler:

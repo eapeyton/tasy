@@ -36,3 +36,6 @@ nosetests.xml
 
 # Cache
 cache.db
+
+# Pause / Resume
+pause.vim

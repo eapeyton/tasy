@@ -75,14 +75,6 @@ class URLParser:
             teams.append(Team(teamId,owner=owner))
         return teams
         
-
-    def parse_team_owner(self, team_id, html):
-        page = BeautifulSoup(html)
-        #tags = page.find_all('a',href=re.compile('teamId=%d'%team_id),title=True)
-        tags = page.find_all('a',href=re.compile('teamId'))
-        for tag in tags:
-            print(tag)
-
     def parse_team_players(self, html):
         page = BeautifulSoup(html)
         player_tags = page.find_all('a',playerid=re.compile("\d+"),text=True)

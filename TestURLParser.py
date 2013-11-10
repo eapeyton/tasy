@@ -13,11 +13,11 @@ class TestURLParser(unittest.TestCase):
         webpage = Util.download("http://eapeyton.com")
         self.assertEqual(webpage[:95], """<!--\nTo change this template, choose Tools | Templates\nand open the template in the editor.\n-->""")
 
-    def testDownloadCache(self):
-        Util.clear_cache()
-        with open(Util.cache.location + "
-        webpage = Util.download("http://eapeyton.com")
-        self.assertEqual(webpage, "Fake 
+#    def testDownloadCache(self):
+#        Util.clear_cache()
+#        with open(Util.cache.location + "
+#        webpage = Util.download("http://eapeyton.com")
+#        self.assertEqual(webpage, "Fake 
         
 
     def testComposeLeagueURL(self):

@@ -10,14 +10,17 @@ class TestURLParser(unittest.TestCase):
         self.parser = URLParser()
         
     def testDownload(self):
-        webpage = Util.download("http://eapeyton.com")
+        my_url = "http://eapeyton.com"
+        Util.uncache(my_url)
+        webpage = Util.download(my_url)
         self.assertEqual(webpage[:95], """<!--\nTo change this template, choose Tools | Templates\nand open the template in the editor.\n-->""")
 
-#    def testDownloadCache(self):
-#        Util.clear_cache()
-#        with open(Util.cache.location + "
-#        webpage = Util.download("http://eapeyton.com")
-#        self.assertEqual(webpage, "Fake 
+    def testDownloadCache(self):
+        my_url = "http://eapeyton.com"
+        Util.uncache(my_url)
+        Util.cache[my_url] = "Be cool Honey Bunny!"
+        webpage = Util.download("http://eapeyton.com")
+        self.assertEqual(webpage, "Be cool Honey Bunny!")
         
 
     def testComposeLeagueURL(self):

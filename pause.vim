@@ -31,18 +31,18 @@ endif
 set shortmess=aoO
 badd +47 FantasyObjects.py
 badd +20 TestURLParser.py
-badd +61 URLParser.py
-badd +3 Util.py
+badd +77 URLParser.py
+badd +9 Util.py
 badd +1 schedule_parser.py
 args FantasyObjects.py TestURLParser.py URLParser.py Util.py schedule_parser.py
-edit URLParser.py
+edit TestURLParser.py
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
 argglobal
-edit URLParser.py
+edit TestURLParser.py
 setlocal autoindent
 setlocal nobinary
 setlocal bufhidden=
@@ -138,12 +138,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 77 - ((23 * winheight(0) + 21) / 42)
+let s:l = 105 - ((41 * winheight(0) + 21) / 42)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-77
-normal! 04l
+105
+normal! 08l
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

@@ -2,7 +2,7 @@ import re
 from bs4 import BeautifulSoup
 from FantasyObjects import *
 from urllib.parse import *
-import Util
+from Util import Downloader
 
 class URLParser:
 
@@ -44,21 +44,23 @@ class URLParser:
                 self.season = self.league.seasons[season_year]
 
                 if team_id is not None and "clubhouse" in url:
-                    leagueURL = self.composeURL(leagueId=league_id,seasonId=season_year)
-                    self.season.add_teams(self.parse_teams(leagueURL))
-                    html = Util.download(url)
+                    league_URL = self.composeURL(leagueId=league_id,seasonId=season_year)
+                    self.season.add_teams(self.parse_teams(league_URL))
+                    with Downloader() as dler:
+                        html = dler.download(url)
                     self.team = self.season.teams[team_id]
                     self.team.players = self.parse_team_players(html)
                 if "leagueoffice" in url:
                     self.season.add_teams(self.parse_teams(url))
-                    """
-                    teamURL = url + "&teamId=" + str(teamId)
-                    html = Util.download(url)
-                    self.season.teams[teamId].players = self.parse_team_players(html)
-                    """
+                    for team in self.season.teams.values():
+                        team_URL = self.composeURL(leagueId=league_id,seasonId=season_year,teamId=team.id)
+                        with Downloader() as dler:
+                            html = dler.download(team_URL)
+                        team.players = self.parse_team_players(html)
 
     def parse_teams(self, league_url):
-        html = Util.download(league_url)
+        with Downloader() as dler:
+            html = dler.download(league_url)
         page = BeautifulSoup(html)
         owner_tags = page.find_all('a',href=re.compile('teamId'),title=True)
         links = set()

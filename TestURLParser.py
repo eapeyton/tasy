@@ -1,5 +1,5 @@
 import unittest
-import Util
+from Util import Downloader
 from URLParser import URLParser
 from FantasyObjects import *
 
@@ -11,16 +11,18 @@ class TestURLParser(unittest.TestCase):
         
     def testDownload(self):
         my_url = "http://eapeyton.com"
-        Util.uncache(my_url)
-        webpage = Util.download(my_url)
-        self.assertEqual(webpage[:95], """<!--\nTo change this template, choose Tools | Templates\nand open the template in the editor.\n-->""")
+        with Downloader() as dler:
+            dler.uncache(my_url)
+            webpage = dler.download(my_url)
+            self.assertEqual(webpage[:95], """<!--\nTo change this template, choose Tools | Templates\nand open the template in the editor.\n-->""")
 
     def testDownloadCache(self):
         my_url = "http://eapeyton.com"
-        Util.uncache(my_url)
-        Util.cache[my_url] = "Be cool Honey Bunny!"
-        webpage = Util.download("http://eapeyton.com")
-        self.assertEqual(webpage, "Be cool Honey Bunny!")
+        with Downloader() as dler:
+            dler.uncache(my_url)
+            dler.cache[my_url] = "Be cool Honey Bunny!"
+            webpage = dler.download("http://eapeyton.com")
+            self.assertEqual(webpage, "Be cool Honey Bunny!")
         
 
     def testComposeLeagueURL(self):
@@ -54,6 +56,9 @@ class TestURLParser(unittest.TestCase):
         self.parser.parse("http://games.espn.go.com/ffl/clubhouse?leagueId=1015919&teamId=1&seasonId=2012")
         team = self.parser.team
         self.assertEqual(team.id, 1)
+        self.assertHasSequoyahPlayers(team)
+
+    def assertHasSequoyahPlayers(self, team):
         self.assertHasPlayer(team, 11237, "Matt Ryan")
         self.assertHasPlayer(team, 11289, "Ray Rice")
         self.assertHasPlayer(team, 14885, "Doug Martin")
@@ -88,11 +93,19 @@ class TestURLParser(unittest.TestCase):
         self.assertHasTeam(season, 9, "vishaak ravi")
         self.assertHasTeam(season, 10, "Eric Peyton")
 
+    def testParseSeason2(self):
+        self.parser.parse("http://games.espn.go.com/ffl/leagueoffice?leagueId=1015919&seasonId=2012")
+        season = self.parser.season
+        self.assertHasTeam(season, 1, "Eric Peyton")
+        team = season.teams[1]
+        self.assertHasSequoyahPlayers(team)
+
     def testParsePlayers2(self):
         self.parser.parse("http://games.espn.go.com/ffl/clubhouse?leagueId=1015919&teamId=1&seasonId=2012")
         season = self.parser.season
         self.assertEqual(season.year, 2012)
         self.assertEqual(season.league.id, 1015919)
+        self.assertHasSequoyahPlayers(self.parser.team)
         self.assertHasTeam(season, 1, "Eric Peyton")
         self.assertHasTeam(season, 2, "Eddie Peyton")
         self.assertHasTeam(season, 3, "Mala Morjaria")
